@@ -1,0 +1,170 @@
+{
+  "app_name": "MinersHaven",
+  "theme": "dark",
+  "archetype": "ARCHETYPE 4: SWISS & HIGH-CONTRAST + RETRO-FUTURIST TACTICAL HACKER",
+  "colors": {
+    "surfaces": [
+      {
+        "name": "page",
+        "kind": "solid",
+        "bg": "#0B0E14",
+        "on_bg": "#F1F5F9",
+        "on_bg_muted": "#94A3B8"
+      },
+      {
+        "name": "panel",
+        "kind": "solid",
+        "bg": "#111722",
+        "on_bg": "#F8FAFC",
+        "on_bg_muted": "#A0ABBA",
+        "roles": {
+          "border": "#1E293B",
+          "border_glow": "#00FF66",
+          "accent_mono": "#22C55E",
+          "warning": "#F59E0B",
+          "error": "#EF4444"
+        }
+      },
+      {
+        "name": "card_subtle",
+        "kind": "solid",
+        "bg": "#161F2E",
+        "on_bg": "#F8FAFC",
+        "on_bg_muted": "#8E9DAE"
+      },
+      {
+        "name": "terminal_screen",
+        "kind": "solid",
+        "bg": "#05080E",
+        "on_bg": "#00FF66",
+        "on_bg_muted": "#16A34A"
+      },
+      {
+        "name": "header_glass",
+        "kind": "glass",
+        "contrast_against": "#080C12",
+        "guarantee": "backdrop-blur-xl bg-[#0B0E14]/85 border-b border-[#1E293B]",
+        "on_bg": "#F8FAFC",
+        "on_bg_muted": "#94A3B8"
+      },
+      {
+        "name": "badge_btc",
+        "kind": "solid",
+        "bg": "#2D1D02",
+        "on_bg": "#F59E0B",
+        "on_bg_muted": "#D97706"
+      },
+      {
+        "name": "badge_ltc",
+        "kind": "solid",
+        "bg": "#122033",
+        "on_bg": "#38BDF8",
+        "on_bg_muted": "#0284C7"
+      },
+      {
+        "name": "badge_doge",
+        "kind": "solid",
+        "bg": "#2A2308",
+        "on_bg": "#FACC15",
+        "on_bg_muted": "#CA8A04"
+      },
+      {
+        "name": "badge_zano",
+        "kind": "solid",
+        "bg": "#1F112D",
+        "on_bg": "#C084FC",
+        "on_bg_muted": "#9333EA"
+      }
+    ],
+    "accent": "#00FF66",
+    "on_accent": "#05080E",
+    "coins": {
+      "BTC": {
+        "color": "#F59E0B",
+        "bg": "#2D1D02",
+        "algo": "SHA-256",
+        "default_port": 3333
+      },
+      "LTC": {
+        "color": "#38BDF8",
+        "bg": "#122033",
+        "algo": "Scrypt",
+        "default_port": 3334
+      },
+      "DOGE": {
+        "color": "#FACC15",
+        "bg": "#2A2308",
+        "algo": "Scrypt (AuxPoW)",
+        "default_port": 3335
+      },
+      "ZANO": {
+        "color": "#C084FC",
+        "bg": "#1F112D",
+        "algo": "ProgPoWZ",
+        "default_port": 3336
+      }
+    }
+  },
+  "typography": {
+    "font_family_heading": "Space Grotesk Variable, sans-serif",
+    "font_family_body": "IBM Plex Sans, sans-serif",
+    "font_family_mono": "JetBrains Mono Variable, monospace",
+    "scale_px": {
+      "display": 56,
+      "h1": 44,
+      "h2": 32,
+      "h3": 22,
+      "body": 16,
+      "caption": 14
+    }
+  },
+  "entry_surfaces": {
+    "/": "tactical command deck — cyber telemetry banner top, live pool ticker, quick wallet search bar center, live multi-coin grid with real-time hashrate graphs and stratum quick-connect cards",
+    "/coin/:coinId": "deep telemetry console — dual column with live hashrate area chart and stratum command generator on left, recent mined blocks & payout stream on right",
+    "/miner/:wallet": "personal miner HUD — hashrate history curve, active workers telemetry matrix, unpaid balance meter with one-click payout simulation",
+    "/admin": "restricted access terminal — passkey authorization gateway leading to fee rates, stratum ports, RPC nodes, and coin status controls"
+  },
+  "motion": {
+    "reduced_motion": "respects prefers-reduced-motion via Tailwind motion-reduce:transition-none",
+    "transitions": "transition-colors duration-150 ease-out, opacity 0.2s ease",
+    "pulse": "terminal status dots with animate-pulse"
+  },
+  "accessibility": {
+    "apca_contrast": "All text tokens meet AA standards (4.5:1 for body and muted text against respective container backgrounds)",
+    "focus_states": "focus-visible:ring-2 focus-visible:ring-[#00FF66] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0E14]",
+    "aria_labels": "All copy buttons, charts, and interactive tables must include meaningful aria-labels"
+  },
+  "visual_enhancers": {
+    "grid_borders": "1px solid #1E293B with active hover glow #22C55E22",
+    "scanlines": "subtle terminal overlay on stratum code cards: repeating-linear-gradient(0deg, rgba(0,255,102,0.03) 0px, transparent 2px, transparent 4px)",
+    "terminal_prompt": "prefix indicators e.g. 'STRATUM://' and 'NODE_OK' with pulse indicators",
+    "metrics_typography": "font-mono font-semibold tracking-tight tabular-nums"
+  },
+  "component_paths": {
+    "header": "@/components/Header.tsx",
+    "stratum_modal": "@/components/StratumConnectModal.tsx",
+    "wallet_search": "@/components/WalletSearchBar.tsx",
+    "hashrate_chart": "@/components/HashrateChart.tsx",
+    "worker_table": "@/components/WorkerTable.tsx",
+    "blocks_table": "@/components/BlocksTable.tsx",
+    "payouts_table": "@/components/PayoutsTable.tsx",
+    "admin_coin_manager": "@/components/AdminCoinManager.tsx"
+  },
+  "instructions_to_main_agent": [
+    "App style: Dark Hacker Terminal / Cyber Command Station for crypto mining pool.",
+    "Mobile-first responsive design with US locale formatting (e.g., $ currency values, 12-hour or standard UTC timestamps, commas for thousands separators like 1,420.50 MH/s).",
+    "No user login required for miners — miners look up stats simply by pasting their wallet address.",
+    "Implement 4 coins: BTC (Bitcoin / SHA-256), LTC (Litecoin / Scrypt), DOGE (Dogecoin / Scrypt), ZANO (Zano / ProgPoWZ).",
+    "Ensure pre-seeded mock miner addresses work instantly (provide clickable sample wallet chips near the search input so reviewers can test immediately).",
+    "Stratum backend simulation: Show real stratum connection info per coin (stratum+tcp://stratum.minershaven.io:<port>), stratum mining command builders (e.g. xmrig, bzminer, cgminer, lolminer), worker naming rules, and live ping/latency simulation.",
+    "Include responsive interactive charts using Recharts (AreaChart for Pool Hashrate & Miner Hashrate with custom tooltip and green/amber glows).",
+    "Admin Panel: Protect behind a password prompt (e.g. default 'admin123' / 'minershaven-sec-2026' with display hint for testing). Allow toggling coins, editing pool fee %, changing minimum payout thresholds, stratum ports, and node RPC endpoints with immediate toast notifications.",
+    "All interactive elements and metric displays must have robust data-testid attributes (e.g., data-testid='wallet-search-input', data-testid='wallet-search-button', data-testid='coin-card-btc', data-testid='stratum-copy-button', data-testid='admin-login-button').",
+    "Use JetBrains Mono or IBM Plex Mono for all wallet hashes, stratum URLs, ports, block hashes, and difficulty values."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": {
+    "anti_ai_slop": "Avoid standard empty generic cards. Fill data grids with rich telemetry (diff, luck %, shares/sec, reject rate %, block reward).",
+    "contrast_integrity": "Background is deep obsidian #0B0E14, panels #111722, text #F1F5F9, text muted #94A3B8. Neon green #00FF66 and amber #F59E0B are used strategically for data accents and action triggers.",
+    "toasts": "Use Sonner for toast notifications on copy stratum command, wallet lookup, and admin settings save."
+  }
+}

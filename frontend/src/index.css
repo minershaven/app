@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: 'Space Grotesk Variable', sans-serif;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'JetBrains Mono Variable', monospace;
+    --color-neon: #00FF66;
+    --color-panel: #111722;
+    --color-panel-2: #161F2E;
+    --color-term: #05080E;
+    --color-line: #1E293B;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+    --animate-blink: blink 1s steps(1) infinite;
+    --animate-ticker: ticker 40s linear infinite;
+    --animate-rise: rise 0.45s ease-out both;
+    --animate-flicker: flicker 6s linear infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes flicker { 0%, 96%, 100% { opacity: 1; } 97% { opacity: 0.82; } 98% { opacity: 1; } 99% { opacity: 0.9; } }
+
+:root, .dark {
+    --background: #0B0E14;
+    --foreground: #F1F5F9;
+    --card: #111722;
+    --card-foreground: #F8FAFC;
+    --popover: #111722;
+    --popover-foreground: #F8FAFC;
+    --primary: #00FF66;
+    --primary-foreground: #05080E;
+    --secondary: #161F2E;
+    --secondary-foreground: #F8FAFC;
+    --muted: #161F2E;
+    --muted-foreground: #94A3B8;
+    --accent: #1A2536;
+    --accent-foreground: #F8FAFC;
+    --destructive: #EF4444;
+    --border: #1E293B;
+    --input: #1E293B;
+    --ring: #00FF66;
+    --chart-1: #00FF66;
+    --chart-2: #F59E0B;
+    --chart-3: #38BDF8;
+    --chart-4: #FACC15;
+    --chart-5: #C084FC;
+    --radius: 0.25rem;
+    --sidebar: #111722;
+    --sidebar-foreground: #F8FAFC;
+    --sidebar-primary: #00FF66;
+    --sidebar-primary-foreground: #05080E;
+    --sidebar-accent: #161F2E;
+    --sidebar-accent-foreground: #F8FAFC;
+    --sidebar-border: #1E293B;
+    --sidebar-ring: #00FF66;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(30, 41, 59, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 41, 59, 0.45) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.scanlines {
+  background-image: repeating-linear-gradient(0deg, rgba(0, 255, 102, 0.035) 0px, transparent 2px, transparent 4px);
+}
+.glow-neon { text-shadow: 0 0 18px rgba(0, 255, 102, 0.45); }
