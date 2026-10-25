@@ -19,7 +19,7 @@ valuable hashrate or enabling automatic payouts.
 - Fully synchronized Bitcoin Core and Litecoin Core nodes, each configured for
   authenticated RPC and a wallet available to the pool for block payouts.
 - Firewall and DNS access to the host's TCP ports 3333 (BTC) and 3334 (LTC).
-- Unique payout addresses for each coin. Do not use the demo wallets in `memory/SPEC.md`.
+- Unique real payout addresses for each coin. Do not use example or demo addresses.
 
 Keep RPC endpoints private and restrict their firewall access to the pool host.
 The Stratum ports are public miner-facing services; do not expose the Miningcore
@@ -31,9 +31,9 @@ API or PostgreSQL port publicly.
    and node RPC credentials plus real pool payout addresses. Keep `.env` out of
    version control.
 2. Configure both nodes' RPC allowlists to permit connections from the pool
-   host. When nodes run on the Docker host, `host.docker.internal` is not
-   available on every Linux installation; use a reachable private host address
-   or add the host-gateway mapping supported by your Docker version.
+   host. The Compose file maps `host.docker.internal` to the Docker host gateway;
+   for remote nodes, replace the example host values with reachable private
+   addresses.
 3. Start the services with `docker compose --env-file .env up --build -d`.
 4. Check startup with `docker compose --env-file .env logs -f miningcore` and
    verify both pools report healthy node connections before directing miners.

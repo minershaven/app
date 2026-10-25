@@ -60,6 +60,7 @@ chainlit.md
 
 # Deployment
 .vercel
+/deploy/miningcore/.env
 
 # Data and databases
 agenthub/agents/youtube/db
