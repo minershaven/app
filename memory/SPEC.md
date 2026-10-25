@@ -1,7 +1,7 @@
 # MinersHaven — SPEC
 
 Multi-coin crypto mining pool dashboard (BTC, LTC, DOGE, ZANO). Dark hacker theme.
-**Data is SIMULATED demo telemetry** (seeded in Mongo; hashrates jittered deterministically by time). No real stratum server / coin nodes run in this environment — stratum URLs (stratum.minershaven.io:3333-3336) and node RPC URLs are config values only.
+**Dashboard data is SIMULATED demo telemetry** (seeded in Mongo; hashrates jittered deterministically by time). An optional external Miningcore deployment is configured under `deploy/miningcore` for BTC and Litecoin Stratum/PPLNS, but it is not running in this environment and requires external synchronized nodes. The existing dashboard does not yet ingest Miningcore telemetry. DOGE (AuxPoW merge mining) and ZANO remain unimplemented; their displayed Stratum/RPC addresses are placeholders.
 
 ## Pages
 - `/` overview: wallet lookup + demo wallet chips, live share log (client-side simulated), totals, 4 coin cards, stratum quick-connect (command generator per miner software).

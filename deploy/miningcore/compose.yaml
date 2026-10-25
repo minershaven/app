@@ -1,0 +1,52 @@
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: postgres
+    environment:
+      POSTGRES_DB: miningcore
+      POSTGRES_USER: miningcore
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/miningcore/.env}
+    volumes:
+      - miningcore-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miningcore -d miningcore"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  miningcore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: miningcore
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      MC_PG_HOST: postgres
+      MC_PG_PORT: "5432"
+      MC_PG_DATABASE: miningcore
+      MC_PG_USER: miningcore
+      MC_PG_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/miningcore/.env}
+      BTC_RPC_HOST: ${BTC_RPC_HOST:?Set BTC_RPC_HOST in deploy/miningcore/.env}
+      BTC_RPC_PORT: ${BTC_RPC_PORT:-8332}
+      BTC_RPC_USER: ${BTC_RPC_USER:?Set BTC_RPC_USER in deploy/miningcore/.env}
+      BTC_RPC_PASSWORD: ${BTC_RPC_PASSWORD:?Set BTC_RPC_PASSWORD in deploy/miningcore/.env}
+      BTC_POOL_WALLET: ${BTC_POOL_WALLET:?Set BTC_POOL_WALLET in deploy/miningcore/.env}
+      LTC_RPC_HOST: ${LTC_RPC_HOST:?Set LTC_RPC_HOST in deploy/miningcore/.env}
+      LTC_RPC_PORT: ${LTC_RPC_PORT:-9332}
+      LTC_RPC_USER: ${LTC_RPC_USER:?Set LTC_RPC_USER in deploy/miningcore/.env}
+      LTC_RPC_PASSWORD: ${LTC_RPC_PASSWORD:?Set LTC_RPC_PASSWORD in deploy/miningcore/.env}
+      LTC_POOL_WALLET: ${LTC_POOL_WALLET:?Set LTC_POOL_WALLET in deploy/miningcore/.env}
+    ports:
+      - "3333:3333/tcp"
+      - "3334:3334/tcp"
+    expose:
+      - "4000"
+    restart: unless-stopped
+
+volumes:
+  miningcore-db:

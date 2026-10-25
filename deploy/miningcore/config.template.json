@@ -1,0 +1,98 @@
+{
+  "clusterName": "MinersHaven",
+  "logging": {
+    "level": "info",
+    "enableConsoleLog": true,
+    "enableConsoleColors": false
+  },
+  "api": {
+    "enabled": true,
+    "listenAddress": "0.0.0.0",
+    "port": 4000,
+    "metricsPort": 4001,
+    "adminPort": 4003,
+    "metricsIpWhitelist": ["127.0.0.1", "::1"],
+    "adminIpWhitelist": ["127.0.0.1", "::1"]
+  },
+  "persistence": {
+    "postgres": {
+      "host": "${MC_PG_HOST}",
+      "port": "${MC_PG_PORT}",
+      "database": "${MC_PG_DATABASE}",
+      "user": "${MC_PG_USER}",
+      "password": "${MC_PG_PASSWORD}",
+      "tls": false
+    }
+  },
+  "paymentProcessing": {
+    "enabled": true,
+    "interval": 600,
+    "coinbaseString": "MinersHaven"
+  },
+  "pools": [
+    {
+      "id": "bitcoin",
+      "enabled": true,
+      "coin": "bitcoin",
+      "address": "${BTC_POOL_WALLET}",
+      "ports": {
+        "3333": {
+          "listenAddress": "0.0.0.0",
+          "difficulty": 1,
+          "varDiff": {
+            "minDiff": 1,
+            "targetTime": 15,
+            "retargetTime": 90,
+            "variancePercent": 30
+          }
+        }
+      },
+      "daemons": [
+        {
+          "host": "${BTC_RPC_HOST}",
+          "port": "${BTC_RPC_PORT}",
+          "user": "${BTC_RPC_USER}",
+          "password": "${BTC_RPC_PASSWORD}"
+        }
+      ],
+      "paymentProcessing": {
+        "enabled": true,
+        "minimumPayment": 0.005,
+        "payoutScheme": "PPLNS",
+        "payoutSchemeConfig": {}
+      }
+    },
+    {
+      "id": "litecoin",
+      "enabled": true,
+      "coin": "litecoin",
+      "address": "${LTC_POOL_WALLET}",
+      "ports": {
+        "3334": {
+          "listenAddress": "0.0.0.0",
+          "difficulty": 1,
+          "varDiff": {
+            "minDiff": 1,
+            "targetTime": 15,
+            "retargetTime": 90,
+            "variancePercent": 30
+          }
+        }
+      },
+      "daemons": [
+        {
+          "host": "${LTC_RPC_HOST}",
+          "port": "${LTC_RPC_PORT}",
+          "user": "${LTC_RPC_USER}",
+          "password": "${LTC_RPC_PASSWORD}"
+        }
+      ],
+      "paymentProcessing": {
+        "enabled": true,
+        "minimumPayment": 0.1,
+        "payoutScheme": "PPLNS",
+        "payoutSchemeConfig": {}
+      }
+    }
+  ]
+}
