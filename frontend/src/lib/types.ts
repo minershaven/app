@@ -8,9 +8,11 @@ export interface CoinConfig {
   enabled: boolean;
   stratum_port: number;
   rpc_url: string;
-  block_reward: number;
-  price_usd: number;
+  block_reward: number | null;
+  price_usd: number | null;
   payout_scheme: string;
+  pool_id: string;
+  managed_by: "local" | "miningcore";
 }
 
 export interface CoinUpdate {
@@ -19,6 +21,7 @@ export interface CoinUpdate {
   enabled?: boolean;
   stratum_port?: number;
   rpc_url?: string;
+  pool_id?: string;
 }
 
 export interface CoinSummary extends CoinConfig {
@@ -43,6 +46,7 @@ export interface PoolOverview {
   total_workers: number;
   blocks_24h: number;
   server_time: string;
+  source: "demo" | "miningcore";
 }
 
 export interface CoinDetail {
@@ -56,11 +60,12 @@ export interface Block {
   height: number;
   hash: string;
   reward: number;
-  effort_pct: number;
+  effort_pct: number | null;
   status: "confirmed" | "pending" | "orphaned";
-  confirmations: number;
+  confirmation_progress: number;
   found_by: string;
   found_at: string;
+  info_link: string | null;
 }
 
 export interface Payout {
@@ -70,16 +75,15 @@ export interface Payout {
   amount: number;
   tx_hash: string;
   paid_at: string;
+  tx_link: string | null;
 }
 
 export interface Worker {
   name: string;
   hashrate: number;
-  shares_valid: number;
-  shares_stale: number;
-  shares_invalid: number;
+  shares_per_second: number;
   online: boolean;
-  last_share_at: string;
+  last_share_at: string | null;
 }
 
 export interface SampleWallet {

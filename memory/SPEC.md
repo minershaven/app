@@ -3,6 +3,12 @@
 Multi-coin crypto mining pool dashboard (BTC, LTC, DOGE, ZANO). Dark hacker theme.
 **Dashboard data is SIMULATED demo telemetry** (seeded in Mongo; hashrates jittered deterministically by time). An optional external Miningcore deployment is configured under `deploy/miningcore` for BTC and Litecoin Stratum/PPLNS, but it is not running in this environment and requires external synchronized nodes. The existing dashboard does not yet ingest Miningcore telemetry. DOGE (AuxPoW merge mining) and ZANO remain unimplemented; their displayed Stratum/RPC addresses are placeholders.
 
+## Data sources (backend/.env DATA_SOURCE)
+- `demo` (preview default): seeded Mongo data.
+- `miningcore`: live data from the Miningcore REST API at MININGCORE_API_URL (lib/sources/miningcore.py). Coins are mapped to Miningcore pools by `pool_id`, set in admin, or auto-matched by coin.symbol. Fee, min payout, port and scheme are read-only there (PUT returns 400). If Miningcore is unreachable, endpoints return 502. Demo sample wallets are empty in this mode.
+- To test locally, run the mock Miningcore: `cd backend && uvicorn tests.mock_miningcore:app --port 4000` (test wallet ltc1qtestminer000000000000000000000000000).
+- Native production install (no Docker): `sudo bash deploy/install.sh [--domain d --email e] [--demo]`. It sets up systemd (minershaven-api), nginx and local MongoDB 8. See DEPLOY.md.
+
 ## Pages
 - `/` overview: wallet lookup + demo wallet chips, live share log (client-side simulated), totals, 4 coin cards, stratum quick-connect (command generator per miner software).
 - `/coin/:symbol` coin detail: stats, 24h hashrate chart, stratum connect, Blocks/Payouts tabs. Unknown coin → "ERR_UNKNOWN_COIN".

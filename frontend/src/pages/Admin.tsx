@@ -28,6 +28,8 @@ function CoinEditor({ coin }: { coin: CoinConfig }) {
   const [port, setPort] = useState(String(coin.stratum_port));
   const [rpc, setRpc] = useState(coin.rpc_url);
   const [enabled, setEnabled] = useState(coin.enabled);
+  const [poolId, setPoolId] = useState(coin.pool_id);
+  const mc = coin.managed_by === "miningcore";
 
   const save = useMutation({
     mutationFn: (body: CoinUpdate) => apiPut<CoinConfig>(`/admin/coins/${coin.symbol}`, body),
@@ -42,13 +44,11 @@ function CoinEditor({ coin }: { coin: CoinConfig }) {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    save.mutate({
-      fee_pct: Number(fee),
-      min_payout: Number(minPayout),
-      stratum_port: Number(port),
-      rpc_url: rpc.trim(),
-      enabled,
-    });
+    save.mutate(
+      mc
+        ? { enabled, pool_id: poolId.trim() }
+        : { fee_pct: Number(fee), min_payout: Number(minPayout), stratum_port: Number(port), rpc_url: rpc.trim(), enabled },
+    );
   };
 
   const field = "font-mono text-xs bg-term rounded-sm";
@@ -68,21 +68,36 @@ function CoinEditor({ coin }: { coin: CoinConfig }) {
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="space-y-1.5">
           <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">pool fee %</Label>
-          <Input data-testid={`admin-${sym}-fee-input`} type="number" step="0.1" min="0" max="10" value={fee} onChange={(e) => setFee(e.target.value)} className={field} />
+          <Input data-testid={`admin-${sym}-fee-input`} disabled={mc} type="number" step="0.1" min="0" max="10" value={fee} onChange={(e) => setFee(e.target.value)} className={field} />
         </div>
         <div className="space-y-1.5">
           <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">min payout ({coin.symbol})</Label>
-          <Input data-testid={`admin-${sym}-min-payout-input`} type="number" step="any" min="0" value={minPayout} onChange={(e) => setMinPayout(e.target.value)} className={field} />
+          <Input data-testid={`admin-${sym}-min-payout-input`} disabled={mc} type="number" step="any" min="0" value={minPayout} onChange={(e) => setMinPayout(e.target.value)} className={field} />
         </div>
         <div className="space-y-1.5">
           <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">stratum port</Label>
-          <Input data-testid={`admin-${sym}-port-input`} type="number" min="1024" max="65535" value={port} onChange={(e) => setPort(e.target.value)} className={field} />
+          <Input data-testid={`admin-${sym}-port-input`} disabled={mc} type="number" min="1024" max="65535" value={port} onChange={(e) => setPort(e.target.value)} className={field} />
         </div>
-        <div className="space-y-1.5 sm:col-span-3">
-          <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">node rpc endpoint</Label>
-          <Input data-testid={`admin-${sym}-rpc-input`} value={rpc} onChange={(e) => setRpc(e.target.value)} className={field} />
-        </div>
+        {mc ? (
+          <div className="space-y-1.5 sm:col-span-3">
+            <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">miningcore pool id</Label>
+            <Input data-testid={`admin-${sym}-pool-id-input`} value={poolId} placeholder={`auto-match by symbol ${coin.symbol}`} onChange={(e) => setPoolId(e.target.value)} className={field} />
+            <p data-testid={`admin-${sym}-pool-link`} className="font-mono text-[10px] text-muted-foreground">
+              {coin.pool_id ? `linked → ${coin.rpc_url}` : "NOT_LINKED — no Miningcore pool found for this coin"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-1.5 sm:col-span-3">
+            <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">node rpc endpoint</Label>
+            <Input data-testid={`admin-${sym}-rpc-input`} value={rpc} onChange={(e) => setRpc(e.target.value)} className={field} />
+          </div>
+        )}
       </div>
+      {mc && (
+        <p className="mt-3 font-mono text-[10px] leading-relaxed text-amber-400/90">
+          Fee, min payout and ports are read live from Miningcore — change them in Miningcore&apos;s config.json and restart Miningcore.
+        </p>
+      )}
       <div className="mt-4 flex justify-end">
         <Button type="submit" data-testid={`admin-${sym}-save-button`} disabled={save.isPending} className="rounded-sm font-mono text-xs uppercase tracking-wider">
           {save.isPending ? "saving…" : "save config"}
@@ -161,7 +176,7 @@ export default function Admin() {
             </Button>
           </div>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            {coins.data?.map((c) => <CoinEditor key={`${c.symbol}-${c.fee_pct}-${c.min_payout}-${c.stratum_port}-${c.enabled}-${c.rpc_url}`} coin={c} />)}
+            {coins.data?.map((c) => <CoinEditor key={`${c.symbol}-${c.fee_pct}-${c.min_payout}-${c.stratum_port}-${c.enabled}-${c.rpc_url}-${c.pool_id}`} coin={c} />)}
           </div>
         </>
       )}

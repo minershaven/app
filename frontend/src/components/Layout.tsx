@@ -51,7 +51,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-6 font-mono text-xs text-muted-foreground sm:px-6">
           <span>© 2026 MinersHaven · PPLNS · BTC / LTC / DOGE / ZANO</span>
           <span className="flex items-center gap-2">
-            <span className="size-1.5 animate-pulse rounded-full bg-neon" /> NODE_OK · demo telemetry
+            <span className="size-1.5 animate-pulse rounded-full bg-neon" /> NODE_OK · powered by Miningcore
           </span>
         </div>
       </footer>

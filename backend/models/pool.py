@@ -11,10 +11,12 @@ class CoinConfig(BaseModel):
     min_payout: float
     enabled: bool = True
     stratum_port: int
-    rpc_url: str
-    block_reward: float
-    price_usd: float
+    rpc_url: str = ""
+    block_reward: Optional[float] = None
+    price_usd: Optional[float] = None
     payout_scheme: str = "PPLNS"
+    pool_id: str = ""  # Miningcore pool id; empty = auto-match by coin symbol
+    managed_by: Literal["local", "miningcore"] = "local"
 
 
 class CoinUpdate(BaseModel):
@@ -23,6 +25,7 @@ class CoinUpdate(BaseModel):
     enabled: Optional[bool] = None
     stratum_port: Optional[int] = Field(default=None, ge=1024, le=65535)
     rpc_url: Optional[str] = Field(default=None, min_length=1)
+    pool_id: Optional[str] = None
 
 
 class CoinSummary(CoinConfig):
@@ -47,6 +50,7 @@ class PoolOverview(BaseModel):
     total_workers: int
     blocks_24h: int
     server_time: str
+    source: Literal["demo", "miningcore"]
 
 
 class CoinDetail(BaseModel):
@@ -60,11 +64,12 @@ class Block(BaseModel):
     height: int
     hash: str
     reward: float
-    effort_pct: float
+    effort_pct: Optional[float] = None
     status: Literal["confirmed", "pending", "orphaned"]
-    confirmations: int
+    confirmation_progress: float  # 0..1
     found_by: str
     found_at: str
+    info_link: Optional[str] = None
 
 
 class Payout(BaseModel):
@@ -74,16 +79,15 @@ class Payout(BaseModel):
     amount: float
     tx_hash: str
     paid_at: str
+    tx_link: Optional[str] = None
 
 
 class Worker(BaseModel):
     name: str
     hashrate: float
-    shares_valid: int
-    shares_stale: int
-    shares_invalid: int
+    shares_per_second: float
     online: bool
-    last_share_at: str
+    last_share_at: Optional[str] = None
 
 
 class SampleWallet(BaseModel):

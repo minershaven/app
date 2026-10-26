@@ -40,7 +40,7 @@ export default function WalletSearchBar({ showSamples = true }: { showSamples?: 
           <Search className="size-4" /> Track
         </Button>
       </form>
-      {showSamples && samples.data && !samples.isError && (
+      {showSamples && samples.data && samples.data.length > 0 && !samples.isError && (
         <div className="flex flex-wrap items-center gap-2" data-testid="sample-wallets">
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">try a demo miner:</span>
           {samples.data.map((s) => (

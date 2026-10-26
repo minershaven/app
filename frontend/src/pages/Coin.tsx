@@ -47,7 +47,7 @@ export default function Coin() {
           </h1>
           {coin && (
             <p className="mt-1 font-mono text-xs text-muted-foreground">
-              {coin.algo} · {coin.payout_scheme} · fee {coin.fee_pct}% · min payout {formatCoin(coin.min_payout, symbol)} · {formatUsd(coin.price_usd)}
+              {coin.algo} · {coin.payout_scheme} · fee {coin.fee_pct}% · min payout {formatCoin(coin.min_payout, symbol)}{coin.price_usd != null && ` · ${formatUsd(coin.price_usd)}`}
             </p>
           )}
         </div>

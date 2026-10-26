@@ -77,7 +77,7 @@ function CoinCard({ c, i }: { c: CoinSummary; i: number }) {
         </div>
         <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
           <span>last block {ago(c.last_block_at)}</span>
-          <span>{formatUsd(c.price_usd)}</span>
+          <span>{c.price_usd != null ? formatUsd(c.price_usd) : `effort ${c.effort_pct.toFixed(0)}%`}</span>
         </div>
         <ArrowUpRight className="absolute bottom-4 right-4 size-4 text-muted-foreground opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
       </Link>
@@ -124,7 +124,9 @@ export default function Home() {
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between">
           <h2 className="font-heading text-2xl font-semibold tracking-tight">Pools</h2>
-          <span className="font-mono text-[11px] text-muted-foreground">auto-refresh 30s</span>
+          <span data-testid="data-source-label" className="font-mono text-[11px] text-muted-foreground">
+            {data && !isError ? (data.source === "miningcore" ? "live · miningcore" : "demo data") : "connecting…"} · auto-refresh 30s
+          </span>
         </div>
         {isError && (
           <div data-testid="pool-stats-error" className="rounded-sm border border-dashed border-line p-6 font-mono text-xs text-muted-foreground">

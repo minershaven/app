@@ -88,7 +88,7 @@ async def seed_all(force: bool = False) -> None:
 
     rng = random.Random(1337)
     now = now_utc()
-    await db.coins.insert_many([{**c, "enabled": True, "payout_scheme": "PPLNS"} for c in COINS])
+    await db.coins.insert_many([{**c, "enabled": True, "payout_scheme": "PPLNS", "pool_id": ""} for c in COINS])
 
     for coin in COINS:
         sym = coin["symbol"]

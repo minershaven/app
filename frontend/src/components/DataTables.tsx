@@ -37,13 +37,19 @@ export function BlocksTable({ blocks }: { blocks: Block[] }) {
         {blocks.map((b) => (
           <TableRow key={b.id} data-testid={`block-row-${b.height}`} className="border-line font-mono text-xs transition-colors duration-150 hover:bg-panel-2">
             <TableCell className="tabular-nums text-foreground">{formatInt(b.height)}</TableCell>
-            <TableCell className="text-muted-foreground">{shortHash(b.hash, 10)}</TableCell>
+            <TableCell className="text-muted-foreground">
+              {b.info_link ? (
+                <a href={b.info_link} target="_blank" rel="noreferrer" className="transition-colors duration-150 hover:text-neon">{shortHash(b.hash, 10)}</a>
+              ) : shortHash(b.hash, 10)}
+            </TableCell>
             <TableCell className="tabular-nums">{formatCoin(b.reward, b.coin)}</TableCell>
-            <TableCell className={cn("tabular-nums", b.effort_pct > 100 ? "text-amber-400" : "text-neon")}>{b.effort_pct.toFixed(1)}%</TableCell>
+            <TableCell className={cn("tabular-nums", (b.effort_pct ?? 0) > 100 ? "text-amber-400" : "text-neon")}>
+              {b.effort_pct != null ? `${b.effort_pct.toFixed(1)}%` : "—"}
+            </TableCell>
             <TableCell>
               <span className={cn("rounded-sm border px-1.5 py-0.5 text-[10px] uppercase tracking-wider", STATUS_CLS[b.status])}>
                 {b.status}
-                {b.status === "pending" && ` ${b.confirmations}/100`}
+                {b.status === "pending" && ` ${Math.round(b.confirmation_progress * 100)}%`}
               </span>
             </TableCell>
             <TableCell className="text-muted-foreground">{ago(b.found_at)}</TableCell>
@@ -77,7 +83,11 @@ export function PayoutsTable({ payouts, showWallet = true }: { payouts: Payout[]
               </TableCell>
             )}
             <TableCell className="tabular-nums text-neon">{formatCoin(p.amount, p.coin)}</TableCell>
-            <TableCell className="text-muted-foreground">{shortHash(p.tx_hash, 8)}</TableCell>
+            <TableCell className="text-muted-foreground">
+              {p.tx_link ? (
+                <a href={p.tx_link} target="_blank" rel="noreferrer" className="transition-colors duration-150 hover:text-neon">{shortHash(p.tx_hash, 8)}</a>
+              ) : shortHash(p.tx_hash, 8)}
+            </TableCell>
             <TableCell className="text-muted-foreground">{ago(p.paid_at)}</TableCell>
           </TableRow>
         ))}
@@ -93,14 +103,12 @@ export function WorkerTable({ workers }: { workers: Worker[] }) {
         <TableRow className="border-line hover:bg-transparent">
           <TableHead className={headCls}>Worker</TableHead>
           <TableHead className={headCls}>Hashrate</TableHead>
-          <TableHead className={headCls}>Valid</TableHead>
-          <TableHead className={headCls}>Stale</TableHead>
-          <TableHead className={headCls}>Invalid</TableHead>
+          <TableHead className={headCls}>Shares/s</TableHead>
           <TableHead className={headCls}>Last share</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {workers.length === 0 && empty(6, "NO_WORKERS", "workers-empty")}
+        {workers.length === 0 && empty(4, "NO_WORKERS", "workers-empty")}
         {workers.map((w) => (
           <TableRow key={w.name} data-testid={`worker-row-${w.name}`} className="border-line font-mono text-xs transition-colors duration-150 hover:bg-panel-2">
             <TableCell>
@@ -111,9 +119,7 @@ export function WorkerTable({ workers }: { workers: Worker[] }) {
               </span>
             </TableCell>
             <TableCell className="tabular-nums">{formatHashrate(w.hashrate)}</TableCell>
-            <TableCell className="tabular-nums text-neon">{formatInt(w.shares_valid)}</TableCell>
-            <TableCell className="tabular-nums text-amber-400">{formatInt(w.shares_stale)}</TableCell>
-            <TableCell className="tabular-nums text-red-400">{formatInt(w.shares_invalid)}</TableCell>
+            <TableCell className="tabular-nums text-neon">{w.shares_per_second.toFixed(3)}</TableCell>
             <TableCell className="text-muted-foreground">{ago(w.last_share_at)}</TableCell>
           </TableRow>
         ))}
