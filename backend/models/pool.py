@@ -114,3 +114,28 @@ class AdminLogin(BaseModel):
 
 class AdminStatus(BaseModel):
     authenticated: bool
+
+
+class RecentBlocks(BaseModel):
+    server_time: str
+    blocks: List[Block]
+
+
+class DailyEarning(BaseModel):
+    date: str  # ISO date (UTC day)
+    amount: float
+
+
+class BalanceChange(BaseModel):
+    id: str
+    amount: float
+    usage: str
+    created: str
+
+
+class MinerEarnings(BaseModel):
+    wallet: str
+    coin: str
+    total_30d: float
+    daily: List[DailyEarning]
+    balance_changes: List[BalanceChange]

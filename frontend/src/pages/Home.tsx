@@ -7,6 +7,7 @@ import Layout from "@/components/Layout";
 import WalletSearchBar from "@/components/WalletSearchBar";
 import CoinBadge from "@/components/CoinBadge";
 import StratumConnect from "@/components/StratumConnect";
+import BlockFoundBanner from "@/components/BlockFoundBanner";
 import { Panel, Stat } from "@/components/Panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiGet } from "@/lib/api";
@@ -96,6 +97,7 @@ export default function Home() {
 
   return (
     <Layout>
+      <BlockFoundBanner />
       <section className="grid items-start gap-8 lg:grid-cols-[1.25fr_1fr]">
         <div className="animate-rise">
           <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-neon">// multi-coin pplns pool · est. 2026</div>

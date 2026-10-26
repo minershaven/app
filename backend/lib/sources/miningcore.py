@@ -20,7 +20,7 @@ from fastapi import HTTPException
 from lib.seed_data import iso, now_utc
 from lib.sources import STRATUM_HOST
 from lib.sources.demo import local_coin, local_coins
-from models.pool import Block, CoinConfig, CoinDetail, CoinSummary, HashratePoint, MinerDetail, Payout, PoolOverview, Worker
+from models.pool import BalanceChange, Block, CoinConfig, DailyEarning, MinerEarnings, RecentBlocks, CoinDetail, CoinSummary, HashratePoint, MinerDetail, Payout, PoolOverview, Worker
 
 _CACHE: dict[str, tuple[float, Any]] = {}
 _TTL = float(os.environ.get("MININGCORE_CACHE_SECONDS", "10"))
@@ -202,8 +202,8 @@ def _sum_workers(sample: Optional[dict]) -> float:
     return sum(float((w or {}).get("hashrate") or 0) for w in ((sample or {}).get("workers") or {}).values())
 
 
-async def miner_detail(wallet: str) -> Optional[MinerDetail]:
-    wallet = wallet.strip()
+async def _find_miner(wallet: str) -> Optional[tuple[dict, dict, dict]]:
+    """First enabled coin whose Miningcore pool knows this address → (local cfg, pool, miner stats)."""
     pools = await _pools()
     for cfg in await local_coins():
         pool = _match(cfg, pools)
@@ -213,34 +213,77 @@ async def miner_detail(wallet: str) -> Optional[MinerDetail]:
         if not stats:
             continue
         perf = stats.get("performance") or {}
-        samples = stats.get("performanceSamples") or []
-        active = bool(perf.get("workers")) or bool(samples) or float(stats.get("pendingShares") or 0) > 0 \
-            or float(stats.get("pendingBalance") or 0) > 0 or float(stats.get("totalPaid") or 0) > 0
-        if not active:
-            continue
-
-        perf_time = _iso(perf.get("created"))
-        workers: dict[str, Worker] = {}
-        for s in samples:  # offline workers: seen in history, absent now
-            for name in (s.get("workers") or {}):
-                workers[name or "default"] = Worker(name=name or "default", hashrate=0, shares_per_second=0, online=False,
-                                                     last_share_at=_iso(s.get("created")))
-        for name, w in (perf.get("workers") or {}).items():
-            workers[name or "default"] = Worker(
-                name=name or "default", hashrate=float(w.get("hashrate") or 0),
-                shares_per_second=float(w.get("sharesPerSecond") or 0), online=True, last_share_at=perf_time,
-            )
-        hist = [HashratePoint(t=t, hashrate=_sum_workers(s)) for s in samples if (t := _iso(s.get("created")))]
-        pays = await _get(f"/api/pools/{pool['id']}/miners/{wallet}/payments?page=0&pageSize=50") or []
-        cc = merged_config(cfg, pool)
-        return MinerDetail(
-            wallet=wallet, coin=cfg["symbol"], hashrate=_sum_workers(perf),
-            hashrate_24h_avg=round(sum(p.hashrate for p in hist) / len(hist), 2) if hist else _sum_workers(perf),
-            balance=float(stats.get("pendingBalance") or 0), total_paid=float(stats.get("totalPaid") or 0),
-            min_payout=cc.min_payout, workers=sorted(workers.values(), key=lambda w: (not w.online, w.name)),
-            payouts=[_payout(p, cfg["symbol"]) for p in pays], history=hist,
-        )
+        active = bool(perf.get("workers")) or bool(stats.get("performanceSamples")) \
+            or float(stats.get("pendingShares") or 0) > 0 or float(stats.get("pendingBalance") or 0) > 0 \
+            or float(stats.get("totalPaid") or 0) > 0
+        if active:
+            return cfg, pool, stats
     return None
+
+
+async def miner_detail(wallet: str) -> Optional[MinerDetail]:
+    wallet = wallet.strip()
+    found = await _find_miner(wallet)
+    if not found:
+        return None
+    cfg, pool, stats = found
+    perf = stats.get("performance") or {}
+    samples = stats.get("performanceSamples") or []
+    perf_time = _iso(perf.get("created"))
+    workers: dict[str, Worker] = {}
+    for s in samples:  # offline workers: seen in history, absent now
+        for name in (s.get("workers") or {}):
+            workers[name or "default"] = Worker(name=name or "default", hashrate=0, shares_per_second=0, online=False,
+                                                 last_share_at=_iso(s.get("created")))
+    for name, w in (perf.get("workers") or {}).items():
+        workers[name or "default"] = Worker(
+            name=name or "default", hashrate=float(w.get("hashrate") or 0),
+            shares_per_second=float(w.get("sharesPerSecond") or 0), online=True, last_share_at=perf_time,
+        )
+    hist = [HashratePoint(t=t, hashrate=_sum_workers(s)) for s in samples if (t := _iso(s.get("created")))]
+    pays = await _get(f"/api/pools/{pool['id']}/miners/{wallet}/payments?page=0&pageSize=50") or []
+    cc = merged_config(cfg, pool)
+    return MinerDetail(
+        wallet=wallet, coin=cfg["symbol"], hashrate=_sum_workers(perf),
+        hashrate_24h_avg=round(sum(p.hashrate for p in hist) / len(hist), 2) if hist else _sum_workers(perf),
+        balance=float(stats.get("pendingBalance") or 0), total_paid=float(stats.get("totalPaid") or 0),
+        min_payout=cc.min_payout, workers=sorted(workers.values(), key=lambda w: (not w.online, w.name)),
+        payouts=[_payout(p, cfg["symbol"]) for p in pays], history=hist,
+    )
+
+
+async def miner_earnings(wallet: str) -> Optional[MinerEarnings]:
+    wallet = wallet.strip()
+    found = await _find_miner(wallet)
+    if not found:
+        return None
+    cfg, pool, _ = found
+    base = f"/api/pools/{pool['id']}/miners/{wallet}"
+    daily_raw, changes_raw = await asyncio.gather(
+        _get(f"{base}/earnings/daily?page=0&pageSize=30", allow_404=True),
+        _get(f"{base}/balancechanges?page=0&pageSize=20", allow_404=True),
+    )
+    daily = []
+    for d in daily_raw or []:
+        day = (_iso(d.get("date")) or "")[:10]
+        if day:
+            daily.append(DailyEarning(date=day, amount=float(d.get("amount") or 0)))
+    daily.sort(key=lambda d: d.date)
+    changes = [
+        BalanceChange(id=_id(c.get("created"), c.get("amount"), c.get("usage")), amount=float(c.get("amount") or 0),
+                      usage=c.get("usage") or "", created=_iso(c.get("created")) or "")
+        for c in changes_raw or []
+    ]
+    changes.sort(key=lambda c: c.created, reverse=True)
+    return MinerEarnings(wallet=wallet, coin=cfg["symbol"], total_30d=round(sum(d.amount for d in daily), 8),
+                         daily=daily, balance_changes=changes)
+
+
+async def recent_blocks() -> RecentBlocks:
+    coins = [c for c in await local_coins() if c.get("enabled", True)]
+    lists = await asyncio.gather(*[coin_blocks(c["symbol"]) for c in coins])
+    blocks = sorted((b for lst in lists for b in lst), key=lambda b: b.found_at, reverse=True)[:10]
+    return RecentBlocks(server_time=iso(now_utc()), blocks=blocks)
 
 
 async def admin_coins() -> List[CoinConfig]:

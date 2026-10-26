@@ -6,6 +6,7 @@ import Layout from "@/components/Layout";
 import CoinBadge from "@/components/CoinBadge";
 import HashrateChart from "@/components/HashrateChart";
 import WalletSearchBar from "@/components/WalletSearchBar";
+import EarningsSection from "@/components/EarningsSection";
 import { PayoutsTable, WorkerTable } from "@/components/DataTables";
 import { Panel, Stat } from "@/components/Panel";
 import { apiGet, ApiError } from "@/lib/api";
@@ -92,6 +93,8 @@ export default function Miner() {
               </p>
             </Panel>
           </section>
+
+          <EarningsSection wallet={wallet} enabled={!!m} />
 
           <Panel className="mt-6" title={`workers · ${m?.workers.length ?? 0}`} testId="miner-workers-panel">
             <WorkerTable workers={m ? m.workers : []} />

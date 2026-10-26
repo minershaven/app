@@ -60,6 +60,12 @@
     --animate-ticker: ticker 40s linear infinite;
     --animate-rise: rise 0.45s ease-out both;
     --animate-flicker: flicker 6s linear infinite;
+    --animate-block-glow: block-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes block-glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 28px -6px var(--glow, rgba(0, 255, 102, 0.35)); }
 }
 
 @keyframes blink { 50% { opacity: 0; } }

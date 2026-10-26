@@ -110,3 +110,19 @@ def miner(pid: str, addr: str):
 @app.get("/api/pools/{pid}/miners/{addr}/payments")
 def miner_payments(pid: str, addr: str):
     return _payments() if addr == WALLET else []
+
+
+@app.get("/api/pools/{pid}/miners/{addr}/earnings/daily")
+def miner_daily(pid: str, addr: str):
+    if addr != WALLET:
+        return []
+    return [{"amount": round(0.02 + (i % 4) * 0.005, 6), "date": (NOW - timedelta(days=i)).date().isoformat() + "T00:00:00Z"}
+            for i in range(14)]
+
+
+@app.get("/api/pools/{pid}/miners/{addr}/balancechanges")
+def miner_balance_changes(pid: str, addr: str):
+    if addr != WALLET:
+        return []
+    return [{"poolId": pid, "address": addr, "amount": 0.0123, "usage": "Reward for block 2812900", "created": ts(2)},
+            {"poolId": pid, "address": addr, "amount": 0.0211, "usage": "Reward for block 2812500", "created": ts(30)}]

@@ -16,8 +16,13 @@ Multi-coin crypto mining pool dashboard (BTC, LTC, DOGE, ZANO). Dark hacker them
 - `/admin` password-gated (httpOnly JWT cookie `mh_admin`): edit per-coin fee %, min payout, enabled, stratum port (unique, 1024-65535), node RPC URL. Disabling a coin shows it as "maintenance" with 0 hashrate.
 
 ## API (all under /api)
-GET /pool/stats, GET /coins/{sym}, GET /coins/{sym}/blocks, GET /coins/{sym}/payouts, GET /miners/samples, GET /miners/{wallet},
+GET /pool/stats, GET /blocks/recent (newest 10 across enabled coins + server_time), GET /miners/{wallet}/earnings (30-day daily + balance changes; 404 unknown), GET /coins/{sym}, GET /coins/{sym}/blocks, GET /coins/{sym}/payouts, GET /miners/samples, GET /miners/{wallet},
 POST /admin/login {password}, POST /admin/logout, GET /admin/me, GET /admin/coins (auth), PUT /admin/coins/{sym} (auth, 409 on port clash).
+
+## Block-found banner + earnings
+- The overview polls /blocks/recent every 15s. A banner shows the newest block if it was found in the last 30 minutes (server_time based). Dismissing it stores the block id in localStorage `mh-dismissed-block`. A toast appears when a new block arrives while the page is open.
+- In demo mode /blocks/recent "mints" blocks lazily, one per expected interval per coin (BTC 2/day, LTC 6, DOGE 40, ZANO 18), backfilling gaps up to 60 per coin. A unique index on (coin, height) stops duplicates.
+- The miner page has a daily earnings bar chart (30 days, avg, best) and a balance history list. Miningcore mode uses /miners/{addr}/earnings/daily and /balancechanges.
 
 ## Data (Mongo)
 coins, miners (wallet, coin, workers[base_hashrate...], balance, total_paid), blocks, payouts. Seeded on startup if empty; reset with `cd /app/backend && python seed.py`.

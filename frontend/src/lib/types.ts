@@ -107,3 +107,28 @@ export interface MinerDetail {
 export interface AdminStatus {
   authenticated: boolean;
 }
+
+export interface RecentBlocks {
+  server_time: string;
+  blocks: Block[];
+}
+
+export interface DailyEarning {
+  date: string;
+  amount: number;
+}
+
+export interface BalanceChange {
+  id: string;
+  amount: number;
+  usage: string;
+  created: string;
+}
+
+export interface MinerEarnings {
+  wallet: string;
+  coin: string;
+  total_30d: number;
+  daily: DailyEarning[];
+  balance_changes: BalanceChange[];
+}

@@ -24,7 +24,10 @@ INDEXES: dict[str, list[IndexModel]] = {
         IndexModel([("wallet", ASCENDING)], name="wallet", unique=True),
         IndexModel([("coin", ASCENDING)], name="coin"),
     ],
-    "blocks": [IndexModel([("coin", ASCENDING), ("found_at", DESCENDING)], name="coin_found")],
+    "blocks": [
+        IndexModel([("coin", ASCENDING), ("found_at", DESCENDING)], name="coin_found"),
+        IndexModel([("coin", ASCENDING), ("height", ASCENDING)], name="coin_height", unique=True),
+    ],
     "payouts": [
         IndexModel([("coin", ASCENDING), ("paid_at", DESCENDING)], name="coin_paid"),
         IndexModel([("wallet", ASCENDING), ("paid_at", DESCENDING)], name="wallet_paid"),
