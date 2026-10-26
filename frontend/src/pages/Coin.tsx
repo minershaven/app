@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import CoinBadge from "@/components/CoinBadge";
 import HashrateChart from "@/components/HashrateChart";
 import StratumConnect from "@/components/StratumConnect";
+import LuckChart from "@/components/LuckChart";
 import WalletSearchBar from "@/components/WalletSearchBar";
 import { BlocksTable, PayoutsTable } from "@/components/DataTables";
 import { Panel, Stat } from "@/components/Panel";
@@ -82,6 +83,8 @@ export default function Coin() {
           )}
         </Panel>
       </section>
+
+      <LuckChart blocks={blocks.data && !blocks.isError ? blocks.data : []} symbol={symbol} />
 
       <Panel className="mt-6" testId="coin-activity-panel">
         <Tabs defaultValue="blocks">

@@ -24,6 +24,9 @@ POST /admin/login {password}, POST /admin/logout, GET /admin/me, GET /admin/coin
 - In demo mode /blocks/recent "mints" blocks lazily, one per expected interval per coin (BTC 2/day, LTC 6, DOGE 40, ZANO 18), backfilling gaps up to 60 per coin. A unique index on (coin, height) stops duplicates.
 - The miner page has a daily earnings bar chart (30 days, avg, best) and a balance history list. Miningcore mode uses /miners/{addr}/earnings/daily and /balancechanges.
 
+## Block luck chart
+- On the coin page (LuckChart.tsx) this is built in the frontend from /coins/{sym}/blocks, with no new endpoint. It shows one bar per block's effort, oldest to newest. Green means at or under 100% (lucky), amber means over 100%, red means orphaned. Dashed lines mark 100% and the average. Above the chart are stats: avg effort, lucky count, luckiest and unluckiest. Blocks with no effort value are skipped.
+
 ## Data (Mongo)
 coins, miners (wallet, coin, workers[base_hashrate...], balance, total_paid), blocks, payouts. Seeded on startup if empty; reset with `cd /app/backend && python seed.py`.
 
